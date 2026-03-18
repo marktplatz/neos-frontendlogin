@@ -11,6 +11,7 @@ UpAssist.Neos.FrontendLogin.UserController.new = Neos.Fusion:Component {
         submit = ${I18n.translate(translationPackage + ':Main:button.create')}
     }
     renderer = afx`
+        <UpAssist.Neos.FrontendLogin:Component.Molecule.FlashMessages flashMessages={flashMessages} />
         <Neos.Fusion.Form:Form
             form.target.controller="User"
             form.target.action="create"

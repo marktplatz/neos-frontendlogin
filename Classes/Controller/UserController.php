@@ -165,14 +165,25 @@ class UserController extends ActionController
      */
     public function createAction(UserRegistrationDto $newUser)
     {
-        $this->userService->addUser($newUser->getUsername(), $newUser->getPassword(), $newUser->getUser(), [$newUser->getRoleIdentifier()], null, $this->request);
+        try {
+            $this->userService->addUser($newUser->getUsername(), $newUser->getPassword(), $newUser->getUser(), [$newUser->getRoleIdentifier()], null, $this->request);
+        } catch (Exception $e) {
+            $this->controllerContext->getFlashMessageContainer()->addMessage(
+                new \Neos\Error\Messages\Error(
+                    $this->translator->translateById('flashMessage.user.create.duplicate.msg', [], null, null, 'Main', $this->translationPackage) ?? 'A user with this email address or username already exists.',
+                    null, [],
+                    $this->translator->translateById('flashMessage.user.create.duplicate.title', [], null, null, 'Main', $this->translationPackage) ?? 'User already exists'
+                )
+            );
+            $this->redirect('new');
+        }
 
         $translationId = $this->enableDoubleOptin ? 'flashMessage.user.create.doubleOptin.msg' : 'flashMessage.user.create.msg';
         $this->controllerContext->getFlashMessageContainer()->addMessage(
             new Notice(
-                $this->translator->translateById($translationId, [],null,null,'Main', $this->translationPackage),
+                $this->translator->translateById($translationId, [],null,null,'Main', $this->translationPackage) ?? 'Your user is created successfully.',
                 null, [],
-                $this->translator->translateById('flashMessage.user.create.title', [],null,null,'Main', $this->translationPackage)
+                $this->translator->translateById('flashMessage.user.create.title', [],null,null,'Main', $this->translationPackage) ?? 'Your user is created!'
             )
         );
 
@@ -198,14 +209,25 @@ class UserController extends ActionController
      */
     public function createByEmailAction(UserRegistrationDto $newUser)
     {
-        $this->userService->addUser($newUser->getFirstEmailAddress(), $newUser->getPassword(), $newUser->getUser(), [$newUser->getRoleIdentifier()], null, $this->request);
+        try {
+            $this->userService->addUser($newUser->getFirstEmailAddress(), $newUser->getPassword(), $newUser->getUser(), [$newUser->getRoleIdentifier()], null, $this->request);
+        } catch (Exception $e) {
+            $this->controllerContext->getFlashMessageContainer()->addMessage(
+                new \Neos\Error\Messages\Error(
+                    $this->translator->translateById('flashMessage.user.create.duplicate.msg', [], null, null, 'Main', $this->translationPackage) ?? 'A user with this email address or username already exists.',
+                    null, [],
+                    $this->translator->translateById('flashMessage.user.create.duplicate.title', [], null, null, 'Main', $this->translationPackage) ?? 'User already exists'
+                )
+            );
+            $this->redirect('newByEmail');
+        }
 
         $translationId = $this->enableDoubleOptin ? 'flashMessage.user.create.doubleOptin.msg' : 'flashMessage.user.create.msg';
         $this->controllerContext->getFlashMessageContainer()->addMessage(
             new Notice(
-                $this->translator->translateById($translationId, [],null,null,'Main', $this->translationPackage),
+                $this->translator->translateById($translationId, [],null,null,'Main', $this->translationPackage) ?? 'Your user is created successfully.',
                 null, [],
-                $this->translator->translateById('flashMessage.user.create.title', [],null,null,'Main', $this->translationPackage)
+                $this->translator->translateById('flashMessage.user.create.title', [],null,null,'Main', $this->translationPackage) ?? 'Your user is created!'
             )
         );
 

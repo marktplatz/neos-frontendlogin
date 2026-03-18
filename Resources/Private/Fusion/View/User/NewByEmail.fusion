@@ -12,6 +12,7 @@ UpAssist.Neos.FrontendLogin.UserController.newByEmail = Neos.Fusion:Component {
     }
 
     renderer = afx`
+        <UpAssist.Neos.FrontendLogin:Component.Molecule.FlashMessages flashMessages={flashMessages} />
         <Neos.Fusion.Form:Form
             form.target.controller="User"
             form.target.action="createByEmail"

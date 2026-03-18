@@ -123,14 +123,19 @@ class FrontendUserService extends UserService
             $query->logicalAnd(
                 $query->equals('authenticationProviderName', $this->defaultAuthenticationProviderName)
             )
-        )->execute()->toArray();
+        )->execute();
 
         /** @var Account $account */
         foreach ($accounts as $account) {
-            $user = $this->getUser($account->getAccountIdentifier());
+            $user = $this->partyService->getAssignedPartyOfAccount($account);
+            if (!$user instanceof User) {
+                continue;
+            }
 
-            if (isset($user->getElectronicAddresses()[0]) && $user->getElectronicAddresses()[0]->getIdentifier() === $emailAddress) {
-                return $account;
+            foreach ($user->getElectronicAddresses() as $electronicAddress) {
+                if ($electronicAddress->getIdentifier() === $emailAddress) {
+                    return $account;
+                }
             }
         }
 
@@ -166,9 +171,19 @@ class FrontendUserService extends UserService
      * @param null $authenticationProviderName
      * @param ActionRequest|null $request
      * @return User
+     * @throws Exception
      */
     public function addUser($username, $password, User $user, array $roleIdentifiers = null, $authenticationProviderName = null, ActionRequest $request = null)
     {
+        if ($this->getUser($username) !== null) {
+            throw new Exception(sprintf('User with username "%s" already exists', $username), 1710756000);
+        }
+
+        $emailAddress = $user->getElectronicAddresses()->first();
+        if ($emailAddress instanceof \Neos\Party\Domain\Model\ElectronicAddress && $this->getAccountByEmailAddress($emailAddress->getIdentifier()) !== null) {
+            throw new Exception(sprintf('User with email address "%s" already exists', $emailAddress->getIdentifier()), 1710756001);
+        }
+
         if ($request !== null) {
             $this->doubleOptInHelper->setRequest($request);
         }
@@ -205,7 +220,6 @@ class FrontendUserService extends UserService
         }
 
         return $user;
-        // TODO: Prevent duplicates (now nasty sql error)
     }
 
     /**

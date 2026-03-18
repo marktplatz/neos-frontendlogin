@@ -15,11 +15,12 @@ UpAssist.Neos.FrontendLogin.LoginController.login = Neos.Fusion:Component {
     }
 
     renderer = afx`
-      <UpAssist.Neos.FrontendLogin:Component.Molecule.FlashMessages flashMessages={flashMessages}/>
       <Neos.Fusion:Fragment @if={Security.hasRole('UpAssist.Neos.FrontendLogin:User')}>
+        <UpAssist.Neos.FrontendLogin:Component.Molecule.FlashMessages flashMessages={flashMessages} />
         <UpAssist.Neos.FrontendLogin:Component.Molecule.Status enableLogoutButton={true}/>
       </Neos.Fusion:Fragment>
       <Neos.Fusion:Fragment @if={!Security.hasRole('UpAssist.Neos.FrontendLogin:User')}>
+        <UpAssist.Neos.FrontendLogin:Component.Molecule.FlashMessages flashMessages={flashMessages} />
         <UpAssist.Neos.FrontendLogin:Component.Molecule.LoginForm usernameLabel={props.labels.username}/>
         <a href={props.resetPassword} class="password reset action action--password-reset"
            @if={props.resetPassword}>{props.labels.resetPassword}</a>

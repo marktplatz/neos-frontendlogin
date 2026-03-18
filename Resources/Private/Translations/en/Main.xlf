@@ -59,6 +59,12 @@
       <trans-unit id="flashMessage.user.create.title">
         <source>Your user is created!</source>
       </trans-unit>
+      <trans-unit id="flashMessage.user.create.duplicate.title">
+        <source>User already exists</source>
+      </trans-unit>
+      <trans-unit id="flashMessage.user.create.duplicate.msg">
+        <source>A user with this email address or username already exists.</source>
+      </trans-unit>
       <trans-unit id="action.resetPassword">
         <source>Forgot your password?</source>
       </trans-unit>

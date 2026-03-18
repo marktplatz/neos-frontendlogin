@@ -11,6 +11,7 @@ UpAssist.Neos.FrontendLogin.UserController.show = Neos.Fusion:Component {
     }
 
     renderer = afx`
+        <UpAssist.Neos.FrontendLogin:Component.Molecule.FlashMessages flashMessages={flashMessages} />
         <Neos.Fusion.Form:Form
             form.data.user={user}
             form.target.controller="User"
