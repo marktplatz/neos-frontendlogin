@@ -6,10 +6,12 @@ namespace UpAssist\Neos\FrontendLogin\Domain\Service;
  * This script belongs to the Neos Flow package "UpAssist.Neos.FrontendLogin".*
  *                                                                             */
 
+use Flownative\DoubleOptIn\Helper;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Service as I18nService;
 use Neos\Flow\Security\Account;
 use Neos\Neos\Domain\Exception;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService;
 use UpAssist\Neos\FrontendLogin\Service\EmailService;
@@ -33,6 +35,30 @@ class FrontendUserService extends UserService
      * @Flow\Inject
      */
     protected I18nService $i18nService;
+
+    /**
+     * @var Helper
+     * @Flow\Inject
+     */
+    protected Helper $doubleOptInHelper;
+
+    /**
+     * @var bool
+     * @Flow\InjectConfiguration(path="enableDoubleOptin")
+     */
+    protected bool $enableDoubleOptin;
+
+    /**
+     * @var array
+     * @Flow\InjectConfiguration(path="autoApprovedDomains")
+     */
+    protected array $autoApprovedDomains;
+
+    /**
+     * @var string
+     * @Flow\InjectConfiguration(path="autoApprovedRole")
+     */
+    protected string $autoApprovedRole;
 
     /**
      * Returns the currently logged in user, if any
@@ -138,16 +164,97 @@ class FrontendUserService extends UserService
      * @param User $user
      * @param array|null $roleIdentifiers
      * @param null $authenticationProviderName
+     * @param ActionRequest|null $request
      * @return User
      */
-    public function addUser($username, $password, User $user, array $roleIdentifiers = null, $authenticationProviderName = null)
+    public function addUser($username, $password, User $user, array $roleIdentifiers = null, $authenticationProviderName = null, ActionRequest $request = null)
     {
-        $this->emailService->sendEmail('adminNotification', [
-            'username' => $username,
-            'locale' => $this->i18nService->getConfiguration()->getCurrentLocale()->getLanguage()
-        ]);
-        return parent::addUser($username, $password, $user, $roleIdentifiers, $authenticationProviderName);
+        if ($request !== null) {
+            $this->doubleOptInHelper->setRequest($request);
+        }
+
+        $user = parent::addUser($username, $password, $user, $roleIdentifiers, $authenticationProviderName);
+        $this->assignAutoApprovedRoles($user);
+
+        if ($this->enableDoubleOptin) {
+            $account = $this->getAccountByUser($user);
+            if ($account instanceof Account) {
+                $account->setExpirationDate(new \DateTime());
+                $this->setRolesForAccount($account, ['UpAssist.Neos.FrontendLogin:UnconfirmedUser']);
+                $this->accountRepository->update($account);
+            }
+
+            $token = $this->doubleOptInHelper->generateToken($user->getElectronicAddresses()[0]->getIdentifier(), 'upassist-neos-frontendlogin', [
+                'username' => $username,
+                'locale' => $this->i18nService->getConfiguration()->getCurrentLocale()->getLanguage()
+            ]);
+
+            $this->emailService->sendEmail('confirmRegistration', [
+                'recipient' => $user,
+                'username' => $username,
+                'link' => $this->doubleOptInHelper->getActivationLink($token),
+                'locale' => $this->i18nService->getConfiguration()->getCurrentLocale()->getLanguage()
+            ]);
+        } else {
+            if (!$this->isAutoApproved($user)) {
+                $this->emailService->sendEmail('adminNotification', [
+                    'username' => $username,
+                    'locale' => $this->i18nService->getConfiguration()->getCurrentLocale()->getLanguage()
+                ]);
+            }
+        }
+
+        return $user;
         // TODO: Prevent duplicates (now nasty sql error)
+    }
+
+    /**
+     * @param string $tokenHash
+     * @return void
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @throws \Flownative\DoubleOptIn\UnknownPresetException
+     */
+    public function confirmUser(string $tokenHash): void
+    {
+        $token = $this->doubleOptInHelper->validateTokenHash($tokenHash);
+        if ($token === null) {
+            return;
+        }
+
+        $account = $this->getAccountByEmailAddress($token->getIdentifier());
+        if ($account === null) {
+            return;
+        }
+
+        $account->setExpirationDate(null);
+        $this->setRolesForAccount($account, ['UpAssist.Neos.FrontendLogin:User']);
+        $this->accountRepository->update($account);
+
+        $user = $this->partyService->getAssignedPartyOfAccount($account);
+        if ($user instanceof User) {
+            $this->assignAutoApprovedRoles($user);
+            $this->emitUserConfirmed($user);
+        }
+
+        if (!$this->isAutoApproved($user)) {
+            $meta = $token->getMeta();
+            $this->emailService->sendEmail('adminNotification', [
+                'username' => $account->getAccountIdentifier(),
+                'locale' => $meta['locale'] ?? $this->i18nService->getConfiguration()->getCurrentLocale()->getLanguage()
+            ]);
+        }
+    }
+
+    /**
+     * Signals that the given user has been confirmed via Double Opt-in.
+     *
+     * @param User $user The confirmed user
+     * @return void
+     * @Flow\Signal
+     * @api
+     */
+    public function emitUserConfirmed(User $user)
+    {
     }
 
     /**
@@ -177,5 +284,64 @@ class FrontendUserService extends UserService
      */
     public function emitUserDeleteRequested(User $user)
     {
+    }
+
+    /**
+     * @param User $user
+     * @return bool
+     */
+    protected function isAutoApproved(User $user): bool
+    {
+        if (empty($this->autoApprovedDomains)) {
+            return false;
+        }
+
+        foreach ($user->getAccounts() as $account) {
+            foreach ($account->getRoles() as $role) {
+                if ($role->getIdentifier() === $this->autoApprovedRole) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param User $user
+     * @return void
+     */
+    protected function assignAutoApprovedRoles(User $user): void
+    {
+        if (empty($this->autoApprovedDomains)) {
+            return;
+        }
+
+        $userEmail = null;
+        if ($user->getElectronicAddresses()->count() > 0) {
+            $userEmail = $user->getElectronicAddresses()->first()->getIdentifier();
+        }
+
+        if ($userEmail !== null && str_contains($userEmail, '@')) {
+            $domain = substr(strrchr($userEmail, "@"), 1);
+            if (in_array($domain, $this->autoApprovedDomains)) {
+                $roleIdentifiers = [];
+                foreach ($user->getAccounts() as $account) {
+                    foreach ($account->getRoles() as $role) {
+                        $roleIdentifiers[] = $role->getIdentifier();
+                    }
+                }
+                $roleIdentifiers = array_unique($roleIdentifiers);
+
+                if (!in_array($this->autoApprovedRole, $roleIdentifiers)) {
+                    $roleIdentifiers[] = $this->autoApprovedRole;
+                    $roleIdentifiers = array_unique($roleIdentifiers);
+
+                    foreach ($user->getAccounts() as $account) {
+                        $this->setRolesForAccount($account, $roleIdentifiers);
+                    }
+                }
+            }
+        }
     }
 }

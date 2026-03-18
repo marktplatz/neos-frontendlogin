@@ -13,10 +13,16 @@ class EmailService
 {
 
     /**
-     * @var string $template
-     * @Flow\InjectConfiguration (path="emailTemplates")
+     * @var string
+     * @Flow\InjectConfiguration(path="emailTemplates")
      */
     protected $template;
+
+    /**
+     * @var string
+     * @Flow\InjectConfiguration(path="defaultSenderEmail")
+     */
+    protected $defaultSenderEmail;
 
     /**
      * @param string $templateName
@@ -45,6 +51,13 @@ class EmailService
                 'username' => $arguments['username'],
                 'locale' => $locale
             ],
+            'confirmRegistration' => [
+                'recipient' => $arguments['recipient']->getName()->getFirstName(),
+                'sender' => $this->template[$templateName][$locale]['from'] ?? $this->template[$templateName]['en']['from'] ?? '',
+                'username' => $arguments['username'],
+                'link' => $arguments['link'],
+                'locale' => $locale
+            ],
             default => [
                 'recipient' => $arguments['recipient']->getName()->getFirstName(),
                 'sender' => $arguments['sender']->getName()->getFirstName(),
@@ -62,14 +75,18 @@ class EmailService
 
         if (isset($this->template[$templateName][$locale]['to'])) {
             $recipient = $this->template[$templateName][$locale]['to'];
-        } else {
+        } elseif (isset($arguments['recipient']) && $arguments['recipient'] instanceof User) {
             $recipient = [$arguments['recipient']->getElectronicAddresses()[0]->getIdentifier() => $arguments['recipient']->getName()];
+        } else {
+            $recipient = $this->template[$templateName]['en']['to'] ?? 'admin@example.com';
         }
 
         if (isset($this->template[$templateName][$locale]['from'])) {
             $sender = $this->template[$templateName][$locale]['from'];
-        } else {
+        } elseif (isset($arguments['sender']) && $arguments['sender'] instanceof User) {
             $sender = [$arguments['sender']->getElectronicAddresses()[0]->getIdentifier() => $arguments['sender']->getName()];
+        } else {
+            $sender = $this->template[$templateName]['en']['from'] ?? $this->defaultSenderEmail;
         }
 
         $mail

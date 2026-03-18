@@ -7,6 +7,10 @@ UpAssist:
       # Set this like so to add a form selector for selecting a role upon creating a user.
       roleIdentifiers: []
         # 'UpAssist.Neos.FrontendLogin:User': 'User'
+      enableDoubleOptin: false
+      autoApprovedDomains: []
+      autoApprovedRole: 'UpAssist.Neos.FrontendLogin:User'
+      defaultSenderEmail: 'noreply@example.com'
 Neos:
   Flow:
     security:

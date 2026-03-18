@@ -127,9 +127,14 @@ class LoginController extends AbstractAuthenticationController
      */
     protected function onAuthenticationFailure(AuthenticationRequiredException $exception = null)
     {
+        $messageId = 'flashMessage.login.login-error.msg';
+        if ($exception && $exception->getPrevious() && $exception->getPrevious() instanceof \Neos\Flow\Security\Exception\AccountExpiredException) {
+            $messageId = 'flashMessage.login.account-expired.msg';
+        }
+
         $this->controllerContext->getFlashMessageContainer()->addMessage(
             new Error\Error(
-                $this->translator->translateById('flashMessage.login.login-error.msg', [], null, null, 'Main', $this->translationPackage),
+                $this->translator->translateById($messageId, [], null, null, 'Main', $this->translationPackage),
                 null, [],
                 $this->translator->translateById('flashMessage.login.login-error.title', [], null, null, 'Main', $this->translationPackage)
             )

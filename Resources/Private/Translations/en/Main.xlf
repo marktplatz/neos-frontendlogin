@@ -47,8 +47,14 @@
       <trans-unit id="flashMessage.login.login-error.msg">
         <source>These credentials do not match, please try again.</source>
       </trans-unit>
+      <trans-unit id="flashMessage.login.account-expired.msg">
+        <source>Your account is not confirmed yet. Please check your email.</source>
+      </trans-unit>
       <trans-unit id="flashMessage.user.create.msg">
         <source>Your user is created successfully. You can login now with this user.</source>
+      </trans-unit>
+      <trans-unit id="flashMessage.user.create.doubleOptin.msg">
+        <source>Your user is created successfully. Please check your email to confirm your registration.</source>
       </trans-unit>
       <trans-unit id="flashMessage.user.create.title">
         <source>Your user is created!</source>
@@ -94,6 +100,12 @@
       </trans-unit>
       <trans-unit id="action.resetPassword.messages.success">
         <source>The password has been successfully changed.</source>
+      </trans-unit>
+      <trans-unit id="flashMessage.user.confirm.success.msg">
+        <source>Registration confirmed successfully. You can now log in.</source>
+      </trans-unit>
+      <trans-unit id="flashMessage.user.confirm.error.invalidToken.msg">
+        <source>Invalid registration token.</source>
       </trans-unit>
       <trans-unit id="nodeTypes.groups.frontendLogin">
         <source>Frontend Login</source>

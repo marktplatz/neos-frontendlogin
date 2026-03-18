@@ -6,7 +6,9 @@
         "neos/neos": "*",
         "neos/fusion": "*",
         "neos/fusion-afx": "*",
-        "neos/fusion-form": "*"
+        "neos/fusion-form": "*",
+        "neos/swiftmailer": "^7.3",
+        "flownative/flow-doubleoptin": "^3.1"
     },
     "autoload": {
         "psr-4": {

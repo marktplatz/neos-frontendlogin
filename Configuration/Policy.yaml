@@ -4,7 +4,7 @@ privilegeTargets:
     'UpAssist.Neos.FrontendLogin:CanLogin':
       matcher: 'within(Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController) || method(UpAssist\Neos\FrontendLogin\Controller\LoginController->(?!initialize).*Action())'
     'UpAssist.Neos.FrontendLogin:CanCreateUsers':
-      matcher: 'method(UpAssist\Neos\FrontendLogin\Controller\UserController->(new|newByEmail|create|createByEmail|error)Action())'
+      matcher: 'method(UpAssist\Neos\FrontendLogin\Controller\UserController->(new|newByEmail|create|createByEmail|confirmRegistration|error)Action())'
     'UpAssist.Neos.FrontendLogin:CanShowUser':
       matcher: 'method(UpAssist\Neos\FrontendLogin\Controller\UserController->(show|update|error)Action())'
     'UpAssist.Neos.FrontendLogin:CanEditUser':
@@ -46,6 +46,13 @@ roles:
       -
         # Grant "frontend users" access to Nodes with property "restricted" == true
         privilegeTarget: 'UpAssist.Neos.FrontendLogin:RestrictNode'
+        permission: GRANT
+
+  'UpAssist.Neos.FrontendLogin:UnconfirmedUser':
+    label: 'Unconfirmed Frontend User'
+    privileges:
+      -
+        privilegeTarget: 'UpAssist.Neos.FrontendLogin:CanShowUser'
         permission: GRANT
 
   'Neos.Neos:Editor':

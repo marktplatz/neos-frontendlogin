@@ -6,6 +6,7 @@ namespace UpAssist\Neos\FrontendLogin\Controller;
  * This script belongs to the Neos Flow package "UpAssist.Neos.FrontendLogin".*
  *                                                                             */
 
+use Flownative\DoubleOptIn\UnknownPresetException;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Error\Messages\Notice;
@@ -69,6 +70,13 @@ class UserController extends ActionController
      * @Flow\Inject
      */
     protected PasswordResetTokenRepository $passwordResetTokenRepository;
+
+
+    /**
+     * @var bool
+     * @Flow\InjectConfiguration(path="enableDoubleOptin")
+     */
+    protected bool $enableDoubleOptin;
 
     /**
      * @var Translator $translator
@@ -157,11 +165,12 @@ class UserController extends ActionController
      */
     public function createAction(UserRegistrationDto $newUser)
     {
-        $this->userService->addUser($newUser->getUsername(), $newUser->getPassword(), $newUser->getUser(), [$newUser->getRoleIdentifier()]);
+        $this->userService->addUser($newUser->getUsername(), $newUser->getPassword(), $newUser->getUser(), [$newUser->getRoleIdentifier()], null, $this->request);
 
+        $translationId = $this->enableDoubleOptin ? 'flashMessage.user.create.doubleOptin.msg' : 'flashMessage.user.create.msg';
         $this->controllerContext->getFlashMessageContainer()->addMessage(
             new Notice(
-                $this->translator->translateById('flashMessage.user.create.msg', [],null,null,'Main', $this->translationPackage),
+                $this->translator->translateById($translationId, [],null,null,'Main', $this->translationPackage),
                 null, [],
                 $this->translator->translateById('flashMessage.user.create.title', [],null,null,'Main', $this->translationPackage)
             )
@@ -189,11 +198,12 @@ class UserController extends ActionController
      */
     public function createByEmailAction(UserRegistrationDto $newUser)
     {
-        $this->userService->addUser($newUser->getFirstEmailAddress(), $newUser->getPassword(), $newUser->getUser(), [$newUser->getRoleIdentifier()]);
+        $this->userService->addUser($newUser->getFirstEmailAddress(), $newUser->getPassword(), $newUser->getUser(), [$newUser->getRoleIdentifier()], null, $this->request);
 
+        $translationId = $this->enableDoubleOptin ? 'flashMessage.user.create.doubleOptin.msg' : 'flashMessage.user.create.msg';
         $this->controllerContext->getFlashMessageContainer()->addMessage(
             new Notice(
-                $this->translator->translateById('flashMessage.user.create.msg', [],null,null,'Main', $this->translationPackage),
+                $this->translator->translateById($translationId, [],null,null,'Main', $this->translationPackage),
                 null, [],
                 $this->translator->translateById('flashMessage.user.create.title', [],null,null,'Main', $this->translationPackage)
             )
@@ -211,6 +221,24 @@ class UserController extends ActionController
             $this->redirectToUri($uri);
         }
 
+        $this->redirect('login', 'Login');
+    }
+
+    /**
+     * @param string $token
+     * @throws StopActionException
+     * @throws Exception
+     * @throws IllegalObjectTypeException
+     * @throws UnknownPresetException
+     */
+    public function confirmRegistrationAction(string $token)
+    {
+        $this->userService->confirmUser($token);
+        $this->persistenceManager->persistAll();
+
+        $this->addFlashMessage(
+            $this->translator->translateById('flashMessage.user.confirm.success.msg', [],null,null,'Main', $this->translationPackage)
+        );
         $this->redirect('login', 'Login');
     }
 
