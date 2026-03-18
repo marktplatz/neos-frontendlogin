@@ -14,6 +14,7 @@ use Neos\Neos\Domain\Exception;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService;
+use UpAssist\Neos\FrontendLogin\Domain\Repository\AutoApprovedDomainRepository;
 use UpAssist\Neos\FrontendLogin\Service\EmailService;
 
 /**
@@ -59,6 +60,12 @@ class FrontendUserService extends UserService
      * @Flow\InjectConfiguration(path="autoApprovedRole")
      */
     protected string $autoApprovedRole;
+
+    /**
+     * @var AutoApprovedDomainRepository
+     * @Flow\Inject
+     */
+    protected AutoApprovedDomainRepository $autoApprovedDomainRepository;
 
     /**
      * Returns the currently logged in user, if any
@@ -306,7 +313,7 @@ class FrontendUserService extends UserService
      */
     protected function isAutoApproved(User $user): bool
     {
-        if (empty($this->autoApprovedDomains)) {
+        if (empty($this->autoApprovedDomains) && $this->autoApprovedDomainRepository->countAll() === 0) {
             return false;
         }
 
@@ -327,7 +334,7 @@ class FrontendUserService extends UserService
      */
     protected function assignAutoApprovedRoles(User $user): void
     {
-        if (empty($this->autoApprovedDomains)) {
+        if (empty($this->autoApprovedDomains) && $this->autoApprovedDomainRepository->countAll() === 0) {
             return;
         }
 
@@ -338,7 +345,12 @@ class FrontendUserService extends UserService
 
         if ($userEmail !== null && str_contains($userEmail, '@')) {
             $domain = substr(strrchr($userEmail, "@"), 1);
-            if (in_array($domain, $this->autoApprovedDomains)) {
+            $isAutoApproved = in_array($domain, $this->autoApprovedDomains);
+            if (!$isAutoApproved) {
+                $isAutoApproved = $this->autoApprovedDomainRepository->findOneByDomain($domain) !== null;
+            }
+
+            if ($isAutoApproved) {
                 $roleIdentifiers = [];
                 foreach ($user->getAccounts() as $account) {
                     foreach ($account->getRoles() as $role) {

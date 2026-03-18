@@ -116,6 +116,79 @@
       <trans-unit id="nodeTypes.groups.frontendLogin">
         <source>Frontend Login</source>
       </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.title">
+        <source>Auto Approved Domains</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.description">
+        <source>Users with an email address from these domains will be automatically approved and assigned the auto-approved role.</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.countMessage">
+        <source>There are currently {0} domains registered.</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.table.header.domain">
+        <source>Domain</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.table.header.actions">
+        <source>Actions</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.form.add.title">
+        <source>Add new domains</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.form.add.label.domain">
+        <source>Domains (one per line)</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.form.add.button.submit">
+        <source>Add domains</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.form.add.placeholder">
+        <source>example.com
+sub.example.com</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.action.delete.confirm">
+        <source>Delete domain?</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.action.delete.title">
+        <source>Delete domain {0}</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.flashMessage.create.success">
+        <source>Added {0} domains.</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.flashMessage.create.partialSuccess">
+        <source>Added {0} domains. Skipped {1} invalid and {2} duplicates.</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.flashMessage.create.partialSuccess.invalid">
+        <source>Added {0} domains. Skipped {1} invalid.</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.flashMessage.create.partialSuccess.duplicates">
+        <source>Added {0} domains. Skipped {1} duplicates.</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.flashMessage.create.error.noneAdded">
+        <source>No domains were added. Please check the format and duplicates.</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.flashMessage.create.error.duplicate">
+        <source>Domain already exists</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.flashMessage.create.error.invalidFormat">
+        <source>The domain format is invalid. It should be like domain.tld or sub.domain.tld.</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.flashMessage.delete.success">
+        <source>Domain removed</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.flashMessage.delete.error.notFound">
+        <source>Domain not found</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.flashMessage.error.title">
+        <source>Error</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.action.clearAll.label">
+        <source>Clear all domains</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.action.clearAll.confirm">
+        <source>Are you sure you want to remove all domains?</source>
+      </trans-unit>
+      <trans-unit id="backend.autoApprovedDomains.flashMessage.deleteAll.success">
+        <source>All domains have been removed.</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>

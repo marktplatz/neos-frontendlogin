@@ -1,0 +1,31 @@
+prototype(UpAssist.Neos.FrontendLogin:Component.AddDomainForm) < prototype(Neos.Fusion:Component) {
+
+    renderer = afx`
+        <div>
+            <h3>{I18n.translate('UpAssist.Neos.FrontendLogin:Main:backend.autoApprovedDomains.form.add.title')}</h3>
+            <form class="neos-form-inline" method='post'>
+                <Neos.Fusion:UriBuilder
+                    @path='attributes.action'
+                    action='create'
+                />
+                <fieldset style="display: flex; flex-direction: column; gap: 0.5rem; margin: 1em 0; padding-bottom: 0;">
+                    <input type="hidden" value={Security.csrfToken()} name="__csrfToken" />
+                    <label for="domains-textarea">
+                        {I18n.translate('UpAssist.Neos.FrontendLogin:Main:backend.autoApprovedDomains.form.add.label.domain')}:
+                    </label>
+                    <textarea
+                        id="domains-textarea"
+                        name="moduleArguments[domain]"
+                        required
+                        rows="5"
+                        placeholder={I18n.translate('UpAssist.Neos.FrontendLogin:Main:backend.autoApprovedDomains.form.add.placeholder')}
+                        style="width: 100%; max-width: 400px;"
+                    ></textarea>
+                </fieldset>
+                <button class="neos-button neos-button-success" type="submit">
+                    {I18n.translate('UpAssist.Neos.FrontendLogin:Main:backend.autoApprovedDomains.form.add.button.submit')}
+                </button>
+            </form>
+        </div>
+    `
+}

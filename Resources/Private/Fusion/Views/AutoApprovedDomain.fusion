@@ -1,0 +1,48 @@
+prototype(UpAssist.Neos.FrontendLogin:Module.AutoApprovedDomain.Index) < prototype(Neos.Fusion:Component) {
+    domains = ${[]}
+
+    renderer = afx`
+        <div>
+            <style>{'
+                .neos em {
+                    font-style: italic;
+                }
+                .neos strong {
+                    font-weight: bold;
+                }
+            '}</style>
+            <h1>{I18n.translate('UpAssist.Neos.FrontendLogin:Main:backend.autoApprovedDomains.title')}</h1>
+            <br />
+            <p>
+                {I18n.translate('UpAssist.Neos.FrontendLogin:Main:backend.autoApprovedDomains.description')}
+            </p>
+            <p>
+                {I18n.translate('UpAssist.Neos.FrontendLogin:Main:backend.autoApprovedDomains.countMessage', null, [Array.length(props.domains)])}
+            </p>
+
+            <div @if.hasDomains={Array.length(props.domains) > 0} style="margin: 0.5em 0 1em 0;">
+                <form
+                    class="neos-form-inline"
+                    method="post"
+                    onsubmit={'javascript: return confirm("' + I18n.translate('UpAssist.Neos.FrontendLogin:Main:backend.autoApprovedDomains.action.clearAll.confirm') + '");'}
+                >
+                    <Neos.Fusion:UriBuilder
+                        @path='attributes.action'
+                        action='deleteAll'
+                    />
+                    <input type="hidden" name="__csrfToken" value={Security.csrfToken()} />
+                    <button class="neos-button neos-button-danger" type="submit">
+                        <i class='fa fa-trash'></i>
+                        {I18n.translate('UpAssist.Neos.FrontendLogin:Main:backend.autoApprovedDomains.action.clearAll.label')}
+                    </button>
+                </form>
+            </div>
+
+            <UpAssist.Neos.FrontendLogin:Component.DomainTable domains={props.domains} />
+
+            <hr style="margin: 1em 0;" />
+
+            <UpAssist.Neos.FrontendLogin:Component.AddDomainForm />
+        </div>
+    `
+}

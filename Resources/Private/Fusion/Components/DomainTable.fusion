@@ -1,0 +1,23 @@
+prototype(UpAssist.Neos.FrontendLogin:Component.DomainTable) < prototype(Neos.Fusion:Component) {
+    @propTypes {
+        domains = ${PropTypes.arrayOf(PropTypes.instanceOf('UpAssist\Neos\FrontendLogin\Domain\Model\AutoApprovedDomain'))}
+    }
+
+    domains = ${[]}
+
+    renderer = afx`
+        <table class="neos-table" @if.hasDomains={props.domains}>
+            <thead>
+                <tr>
+                    <th>{I18n.translate('UpAssist.Neos.FrontendLogin:Main:backend.autoApprovedDomains.table.header.domain')}</th>
+                    <th class="neos-action" style="text-align: right;">{I18n.translate('UpAssist.Neos.FrontendLogin:Main:backend.autoApprovedDomains.table.header.actions')}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <Neos.Fusion:Loop items={props.domains} itemName="domainItem">
+                    <UpAssist.Neos.FrontendLogin:Component.DomainRow domainItem={domainItem} />
+                </Neos.Fusion:Loop>
+            </tbody>
+        </table>
+    `
+}

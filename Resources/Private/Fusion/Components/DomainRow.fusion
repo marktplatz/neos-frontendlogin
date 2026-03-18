@@ -1,0 +1,35 @@
+prototype(UpAssist.Neos.FrontendLogin:Component.DomainRow) < prototype(Neos.Fusion:Component) {
+    @propTypes {
+        domainItem = ${PropTypes.instanceOf('UpAssist\Neos\FrontendLogin\Domain\Model\AutoApprovedDomain').isRequired}
+    }
+
+    domainItem = null
+
+    renderer = afx`
+        <tr>
+            <td>{props.domainItem.domain}</td>
+            <td class="neos-action">
+                <form
+                    style="text-align: right;"
+                    class="neos-form-inline"
+                    method="post"
+                    onsubmit={'javascript: return confirm("' + I18n.translate('UpAssist.Neos.FrontendLogin:Main:backend.autoApprovedDomains.action.delete.confirm') + '");'}
+                >
+                    <Neos.Fusion:UriBuilder
+                        @path='attributes.action'
+                        action='delete'
+                    />
+                    <input type="hidden" name="__csrfToken" value={Security.csrfToken()} />
+                    <input type="hidden" name="moduleArguments[domain]" value={props.domainItem.domain} />
+                    <button
+                        class="neos-button neos-button-danger"
+                        type="submit"
+                        title={I18n.translate('UpAssist.Neos.FrontendLogin:Main:backend.autoApprovedDomains.action.delete.title', null, [props.domainItem.domain])}
+                    >
+                        <i class='fa fa-trash'></i>
+                    </button>
+                </form>
+            </td>
+        </tr>
+    `
+}

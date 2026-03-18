@@ -143,6 +143,104 @@
               <source>Frontend Login</source>
               <target>Frontend Login</target>
             </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.title">
+                <source>Auto Approved Domains</source>
+                <target>Automatisch freigegebene Domains</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.description">
+                <source>Users with an email address from these domains will be automatically approved and assigned the auto-approved role.</source>
+                <target>Benutzer mit einer E-Mail-Adresse von diesen Domains werden automatisch freigegeben und erhalten die entsprechende Rolle.</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.countMessage">
+                <source>There are currently {0} domains registered.</source>
+                <target>Es sind aktuell &lt;strong&gt;{0}&lt;/strong&gt; Domains registriert.</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.table.header.domain">
+                <source>Domain</source>
+                <target>Domain</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.table.header.actions">
+                <source>Actions</source>
+                <target>Aktionen</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.form.add.title">
+                <source>Add new domains</source>
+                <target>Neue Domains anlegen</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.form.add.label.domain">
+                <source>Domains (one per line)</source>
+                <target>Domains (eine pro Zeile)</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.form.add.button.submit">
+                <source>Add domains</source>
+                <target>Domains anlegen</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.form.add.placeholder">
+                <source>example.com
+sub.example.com</source>
+                <target>example.com
+sub.example.com</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.action.delete.confirm">
+                <source>Delete domain?</source>
+                <target>Domain löschen?</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.action.delete.title">
+                <source>Delete domain {0}</source>
+                <target>Domain {0} löschen</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.flashMessage.create.success">
+                <source>Added {0} domains.</source>
+                <target>{0} Domains hinzugefügt.</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.flashMessage.create.partialSuccess">
+                <source>Added {0} domains. Skipped {1} invalid and {2} duplicates.</source>
+                <target>{0} Domains hinzugefügt. {1} ungültige und {2} Duplikate wurden übersprungen.</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.flashMessage.create.partialSuccess.invalid">
+                <source>Added {0} domains. Skipped {1} invalid.</source>
+                <target>{0} Domains hinzugefügt. {1} ungültige wurden übersprungen.</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.flashMessage.create.partialSuccess.duplicates">
+                <source>Added {0} domains. Skipped {1} duplicates.</source>
+                <target>{0} Domains hinzugefügt. {1} Duplikate wurden übersprungen.</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.flashMessage.create.error.noneAdded">
+                <source>No domains were added. Please check the format and duplicates.</source>
+                <target>Es wurden keine Domains hinzugefügt. Bitte prüfen Sie das Format und mögliche Duplikate.</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.flashMessage.create.error.duplicate">
+                <source>Domain already exists</source>
+                <target>Domain existiert bereits</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.flashMessage.create.error.invalidFormat">
+                <source>The domain format is invalid. It should be like domain.tld or sub.domain.tld.</source>
+                <target>Das Domain-Format ist ungültig. Es sollte wie domain.tld oder sub.domain.tld sein.</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.flashMessage.delete.success">
+                <source>Domain removed</source>
+                <target>Domain entfernt</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.flashMessage.delete.error.notFound">
+                <source>Domain not found</source>
+                <target>Domain nicht gefunden</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.flashMessage.error.title">
+                <source>Error</source>
+                <target>Fehler</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.action.clearAll.label">
+                <source>Clear all domains</source>
+                <target>Alle Domains löschen</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.action.clearAll.confirm">
+                <source>Are you sure you want to remove all domains?</source>
+                <target>Sind Sie sicher, dass Sie alle Domains entfernen möchten?</target>
+            </trans-unit>
+            <trans-unit id="backend.autoApprovedDomains.flashMessage.deleteAll.success">
+                <source>All domains have been removed.</source>
+                <target>Alle Domains wurden entfernt.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -1,0 +1,5 @@
+UpAssist.Neos.FrontendLogin.AutoApprovedDomainController {
+    index = afx`
+        <UpAssist.Neos.FrontendLogin:Module.AutoApprovedDomain.Index domains={domains} />
+    `
+}

@@ -12,6 +12,27 @@ UpAssist:
       autoApprovedRole: 'UpAssist.Neos.FrontendLogin:User'
       defaultSenderEmail: 'noreply@example.com'
 Neos:
+  Neos:
+    fusion:
+      autoInclude:
+        UpAssist.Neos.FrontendLogin: true
+    userInterface:
+      translation:
+        autoInclude:
+          UpAssist.Neos.FrontendLogin:
+            - Main
+            - Inspector
+            - Modules
+            - 'NodeTypes/*'
+    modules:
+      administration:
+        submodules:
+          autoapproveddomains:
+            label: 'Auto Approved Domains'
+            controller: 'UpAssist\Neos\FrontendLogin\Controller\AutoApprovedDomainController'
+            description: 'Manage domains that are automatically approved during registration'
+            icon: 'fas fa-at'
+            privilegeTarget: 'UpAssist.Neos.FrontendLogin:ManageAutoApprovedDomains'
   Flow:
     security:
       authentication:
@@ -35,18 +56,6 @@ Neos:
     mvc:
       routes:
         UpAssist.Neos.FrontendLogin: true
-  Neos:
-    fusion:
-      autoInclude:
-        UpAssist.Neos.FrontendLogin: true
-      userInterface:
-        translation:
-          autoInclude:
-            UpAssist.Neos.FrontendLogin:
-              - Main
-              - Inspector
-              - Modules
-              - 'NodeTypes/*'
     nodeTypes:
       groups:
         frontendLogin:
