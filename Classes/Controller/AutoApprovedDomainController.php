@@ -59,6 +59,7 @@ class AutoApprovedDomainController extends AbstractModuleController
         $duplicateCount = 0;
         $invalidCount = 0;
 
+        $addedDomainsCountInRequest = [];
         foreach ($domains as $domainItem) {
             $domainItem = trim($domainItem);
             if (empty($domainItem)) {
@@ -67,6 +68,11 @@ class AutoApprovedDomainController extends AbstractModuleController
 
             if (preg_match('/^[a-z0-9-]+(\.[a-z0-9-]+)+$/i', $domainItem) !== 1) {
                 $invalidCount++;
+                continue;
+            }
+
+            if (in_array($domainItem, $addedDomainsCountInRequest)) {
+                $duplicateCount++;
                 continue;
             }
 
@@ -79,6 +85,7 @@ class AutoApprovedDomainController extends AbstractModuleController
             $newDomain = new AutoApprovedDomain($domainItem);
             $this->autoApprovedDomainRepository->add($newDomain);
             $addedDomains[] = $domainItem;
+            $addedDomainsCountInRequest[] = $domainItem;
         }
 
         if (count($addedDomains) > 0) {
