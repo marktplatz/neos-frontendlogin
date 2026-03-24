@@ -13,7 +13,7 @@ class EmailService
 {
 
     /**
-     * @var string
+     * @var array
      * @Flow\InjectConfiguration(path="emailTemplates")
      */
     protected $template;
@@ -33,7 +33,7 @@ class EmailService
     {
         $mail = new Message();
 
-        if (!isset($this->template[$templateName])) return false;
+        if (!is_array($this->template) || !isset($this->template[$templateName])) return false;
 
         $locale = $arguments['locale'] ?? 'en';
 
