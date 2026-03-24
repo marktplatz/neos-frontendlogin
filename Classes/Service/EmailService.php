@@ -39,7 +39,7 @@ class EmailService
 
         $variables = match ($templateName) {
             'passwordReset' => [
-                'recipient' => $arguments['recipient']->getName()->getFirstName(),
+                'recipient' => $arguments['recipient']->getName()->getFullName(),
                 'sender' => $arguments['sender']->getName()->getFirstName(),
                 'domain' => $arguments['domain'],
                 'link' => $arguments['link'],
@@ -52,14 +52,14 @@ class EmailService
                 'locale' => $locale
             ],
             'confirmRegistration' => [
-                'recipient' => $arguments['recipient']->getName()->getFirstName(),
+                'recipient' => $arguments['recipient']->getName()->getFullName(),
                 'sender' => $this->template[$templateName][$locale]['from'] ?? $this->template[$templateName]['en']['from'] ?? '',
                 'username' => $arguments['username'],
                 'link' => $arguments['link'],
                 'locale' => $locale
             ],
             default => [
-                'recipient' => $arguments['recipient']->getName()->getFirstName(),
+                'recipient' => $arguments['recipient']->getName()->getFullName(),
                 'sender' => $arguments['sender']->getName()->getFirstName(),
                 'locale' => $locale
             ],
